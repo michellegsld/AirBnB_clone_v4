@@ -9,3 +9,15 @@ header .logo {
     left: 20px;
     height: 100%;
 }
+
+header div {
+    display: circle;
+    width: 40px;
+    vertical-align: middle;
+    right: 40px;
+    background-color: #cccccc;
+}
+
+header .available {
+    background-color: #ff545f;
+}
