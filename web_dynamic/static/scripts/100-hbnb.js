@@ -75,9 +75,9 @@ window.onload = () => {
     const jsonIDs = {'states': [], 'cities': [], 'amenities': []};
 
     $.each(checked, function (key) {
-      if ($('DIV.amenities').has(key)) {
+      if ($('DIV.amenities').contains(key)) {
         jsonIDs['amenities'].push(key);
-      } else if ($('DIV.locations H2').has(key)) {
+      } else if ($('DIV.locations H2').contains(key)) {
         jsonIDs['states'].push(key);
       } else {
         jsonIDs['cities'].push(key);
