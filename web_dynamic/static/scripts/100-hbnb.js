@@ -1,17 +1,18 @@
 const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div>';
 
 window.onload = () => {
-  const checked = {};
+  const checkedStatesCities = {};
+  const checkedAmenities = {};
 
   // Filter checks for States/Cities
   $('DIV.locations INPUT:checkbox').click(function () {
     console.log('Inside input block');
     if ($(this).prop('checked') === true) {
-      checked[$(this).attr('data-id')] = $(this).attr('data-name');
+      checkedStatesCities[$(this).attr('data-id')] = $(this).attr('data-name');
     } else {
-      delete checked[($(this).attr('data-id'))];
+      delete checkedStatesCities[($(this).attr('data-id'))];
     }
-    const names = $.map(checked, (value, key) => { return value; });
+    const names = $.map(checkedStatesCities, (value, key) => { return value; });
     let formattedString = '';
     for (let i = 0; i < names.length; i++) {
       formattedString += names[i];
@@ -27,11 +28,11 @@ window.onload = () => {
   $('DIV.amenities INPUT:checkbox').click(function () {
     console.log('Inside input block');
     if ($(this).prop('checked') === true) {
-      checked[$(this).attr('data-id')] = $(this).attr('data-name');
+      checkedAmenities[$(this).attr('data-id')] = $(this).attr('data-name');
     } else {
-      delete checked[($(this).attr('data-id'))];
+      delete checkedAmenities[($(this).attr('data-id'))];
     }
-    const names = $.map(checked, (value, key) => { return value; });
+    const names = $.map(checkedAmenities, (value, key) => { return value; });
     let formattedString = '';
     for (let i = 0; i < names.length; i++) {
       formattedString += names[i];
@@ -74,15 +75,14 @@ window.onload = () => {
     // Created list of id's from dictionary of checked states, cities, and amenities
     const jsonIDs = {'states': [], 'cities': [], 'amenities': []};
 
-    $.each(checked, function (key) {
-      if ($('DIV.amenities').contains(key)) {
-        jsonIDs['amenities'].push(key);
-      } else if ($('DIV.locations H2').contains(key)) {
+    $.each(checkedStatesCities, function (key) {
+      if ($('DIV.locations H2').contains(key)) {
         jsonIDs['states'].push(key);
       } else {
         jsonIDs['cities'].push(key);
       }
     });
+    $.each(checkedAmenities, function (key) { jsonIDs['amenities'].push(key); });
 
     // Clear current places displayed
     $('SECTION.places').empty();
