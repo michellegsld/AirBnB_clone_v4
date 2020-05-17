@@ -1,4 +1,4 @@
-const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night"></div></div><div class="information"><div class="max_guest"></div><div class="number_rooms"></div><div class="number_bathrooms"></div></div><div class="user"><b>Owner:</b></div><div class="description"></div>'
+const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div>';
 
 window.onload = () => {
   const checked = {};
@@ -38,17 +38,32 @@ window.onload = () => {
     success: (places) => {
       console.log(places);
       for (const place of places) {
-		let _id = place.id;
-        console.log('In for loop');
-        let newArt = $('<article></article>').appendTo($('SECTION.places'));
+        // Create new place article template
+        let _id = place.id;
+        const newArt = $('<article></article>').appendTo($('SECTION.places'));
         newArt.attr('id', _id);
         newArt.append(articleTemplate);
-		_id = '#' + _id;
-		$.each(place, function (key, val) {
-			$(_id + ' .' + key).text(val);
+        _id = '#' + _id;
+
+        // Loop through attrs of place object and assign values
+        // to elements with matching classnames
+        $.each(place, function (key, val) {
+          if (key === 'price_by_night') {
+            $(_id + ' .' + key).append(val);
+          } else {
+            $(_id + ' .' + key).prepend(val);
+          }
         });
+
+        // Manually assign values to elements without class names
+        // matching place object attr names
         $(_id + ' H2').text(place.name);
-        $(_id + ' .user').append(place.user.first_name + ' ' + place.user.last_name);
+
+        // Get user names by id from API
+        const userUrl = 'http://0.0.0.0:5001/api/v1/users/' + place.user_id;
+        $.getJSON(userUrl, function (user) {
+          $(_id + ' .user').append(user.first_name + ' ' + user.last_name);
+        });
       }
     },
     error: () => {
