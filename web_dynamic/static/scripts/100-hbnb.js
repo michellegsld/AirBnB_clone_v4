@@ -1,18 +1,26 @@
 const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div>';
 
 window.onload = () => {
-  const checkedStatesCities = {};
+  const checkedStates = {};
+  const checkedCities = {};
   const checkedAmenities = {};
 
   // Filter checks for States/Cities
   $('DIV.locations INPUT:checkbox').click(function () {
-    console.log('Inside input block');
     if ($(this).prop('checked') === true) {
-      checkedStatesCities[$(this).attr('data-id')] = $(this).attr('data-name');
+      if ($(this).hasClass('state') === true) {
+        checkedStates[$(this).attr('data-id')] = $(this).attr('data-name');
+      } else {
+        checkedCities[$(this).attr('data-id')] = $(this).attr('data-name');
+      }
     } else {
-      delete checkedStatesCities[($(this).attr('data-id'))];
+      if ($(this).hasClass('state') === true) {
+        delete checkedStates[$(this).attr('data-id')];
+      } else {
+        delete checkedCities[$(this).attr('data-id')];
+      }
     }
-    const names = $.map(checkedStatesCities, (value, key) => { return value; });
+    const names = $.map(Object.assign({}, checkedStates, checkedCities), (value, key) => { return value; });
     let formattedString = '';
     for (let i = 0; i < names.length; i++) {
       formattedString += names[i];
@@ -26,7 +34,6 @@ window.onload = () => {
 
   // Filter checks for Amenities
   $('DIV.amenities INPUT:checkbox').click(function () {
-    console.log('Inside input block');
     if ($(this).prop('checked') === true) {
       checkedAmenities[$(this).attr('data-id')] = $(this).attr('data-name');
     } else {
@@ -60,7 +67,6 @@ window.onload = () => {
     contentType: 'application/json',
     data: '{}',
     success: (places) => {
-      console.log(places.length);
       for (const place of places) {
         populatePlaceArticle(place);
       }
@@ -73,16 +79,11 @@ window.onload = () => {
   // Filtered place request
   $('BUTTON:button').click(function () {
     // Created list of id's from dictionary of checked states, cities, and amenities
-    const jsonIDs = {'states': [], 'cities': [], 'amenities': []};
+    const jsonIDs = { states: [], cities: [], amenities: [] };
 
-    $.each(checkedStatesCities, function (key) {
-      if ($('DIV.locations H2').contains(key)) {
-        jsonIDs['states'].push(key);
-      } else {
-        jsonIDs['cities'].push(key);
-      }
-    });
-    $.each(checkedAmenities, function (key) { jsonIDs['amenities'].push(key); });
+    $.each(checkedStates, function (key) { jsonIDs.states.push(key); });
+    $.each(checkedCities, function (key) { jsonIDs.cities.push(key); });
+    $.each(checkedAmenities, function (key) { jsonIDs.amenities.push(key); });
 
     // Clear current places displayed
     $('SECTION.places').empty();
