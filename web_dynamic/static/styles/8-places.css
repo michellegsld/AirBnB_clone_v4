@@ -106,6 +106,9 @@
 
 .reviews H2 {
     font-size: 16px;
+    text-align: left;
+    display: inline;
+    margin-right: 5px;
     border-bottom:  #DDDDDD 1px;
 }
 
