@@ -1,4 +1,4 @@
-const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div><DIV class="reviews"><H2></H2><SPAN>show</SPAN><UL></UL></DIV>';
+const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div><DIV class="reviews"><H2>Reviews </H2><SPAN>show</SPAN><DIV class="reviewItems"></DIV></DIV>';
 
 window.onload = () => {
   const checkedStates = {};
@@ -130,48 +130,77 @@ window.onload = () => {
       $(_id + ' .user').append(user.first_name + ' ' + user.last_name);
     });
 
+    $(_id + ' SPAN').addClass('reviewToggle');
     // Give SPAN and UL tag an attr that matches place.id
-    $(_id + ' SPAN').attr('id', place.id);
-    $(_id + ' UL').attr('id', place.id);
+    // $(_id + ' SPAN').attr('id', place.id);
+    // $(_id + ' UL').attr('id', place.id);
   }
 
   // Toggle show or hide Reviews
-  $('SPAN').click(function () {
+  $('SECTION.places').on('click', '.reviewToggle', function () {
     // Retrieve id of element
-    _id = $(this).attr('id');
+    const _id = $(this).closest('ARTICLE').attr('id');
 
     // To show the reviews
-    if($(this).text().match('show')) {
+    if ($(this).text().match('show')) {
       $(this).text('hide');
       $.ajax({
         type: 'GET',
-        url: 'http://0.0.0.0:5001/api/v1/places/' + _id + "/reviews",
+        url: 'http://0.0.0.0:5001/api/v1/places/' + _id + '/reviews',
         success: (reviews) => {
-          for (const review of reviews) {
-            populatePlaceReviews(review, _id);
+          console.log('In review GET');
+          console.log(reviews);
+          if (reviews.length > 0) {
+            for (const review of reviews) {
+              populatePlaceReview(review, _id);
+            }
+          } else {
+            $('<UL><LI>No reviews...</LI></UL>').appendTo($('#' + _id + ' DIV.reviewItems'));
           }
         }
       });
     } else { // To hide the reviews
       $(this).text('show');
-      $('UL #' + _id).empty();
+      $('#' + _id + ' DIV.reviewItems').empty();
     }
   });
 
   // Populate place-article with review
   function populatePlaceReview (review, _id) {
+    const reviewUpdated = formatDate(review.updated_at);
+    const reviewText = review.text;
+
     // Get user's name associated with review for top bullet
     const userUrl = 'http://0.0.0.0:5001/api/v1/users/' + review.user_id;
     $.getJSON(userUrl, function (user) {
-      userName = user.first_name + ' ' + user.last_name;
+      const userName = user.first_name + ' ' + user.last_name;
+      const review = $('<UL></UL>').appendTo($('#' + _id + ' DIV.reviewItems'));
+
+      // Create top bullet with title of review
+      const titleContent = '<H3>From ' + userName + ' the ' + reviewUpdated + '</H3>';
+      review.append('<LI>' + titleContent + '</LI>');
+
+      // Create second bullet with text/summary of review
+      const bodyContent = '<P>' + reviewText + '</P>';
+      review.append('<LI>' + bodyContent + '</LI>');
     });
+  }
 
-    // Create top bullet with title of review
-    const titleLI = $('<LI></LI>').appendTo($('UL #' + _id));
-    titleLI.text('<H3>From ' + userName + ' the ' + review.updated_at + '</H3>');
+  function formatDate (dateString) {
+    const months = ['January', 'February', 'March', 'April',
+      'May', 'June', 'July', 'August', 'September',
+      'October', 'November', 'December'];
 
-    // Create second bullet with text/summary of review
-    const textLI = $('<LI></LI>').appendTo($('UL #' + _id));
-    textLI.text('<P>' + review.text + '</P>');
+    const d = new Date(dateString);
+    return (d.getDate() + ordinal(d.getDate) + ' ' +
+            months[d.getMonth()] + ' ' + d.getFullYear());
+  }
+
+  function ordinal (number) {
+    var d = number % 10;
+    return (~~(number % 100 / 10) === 1) ? 'th'
+      : (d === 1) ? 'st'
+        : (d === 2) ? 'nd'
+          : (d === 3) ? 'rd' : 'th';
   }
 };
