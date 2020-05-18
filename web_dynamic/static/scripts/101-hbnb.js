@@ -148,8 +148,6 @@ window.onload = () => {
         type: 'GET',
         url: 'http://0.0.0.0:5001/api/v1/places/' + _id + '/reviews',
         success: (reviews) => {
-          console.log('In review GET');
-          console.log(reviews);
           if (reviews.length > 0) {
             for (const review of reviews) {
               populatePlaceReview(review, _id);
