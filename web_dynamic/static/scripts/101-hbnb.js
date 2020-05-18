@@ -1,4 +1,4 @@
-const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div><DIV class="reviews"><H2>Reviews </H2><SPAN>show</SPAN><DIV class="reviewItems"></DIV></DIV>';
+const articleTemplate = '<div class="title_box"><h2></h2><div class="price_by_night">$</div></div><div class="information"><div class="max_guest"> Guests</div><div class="number_rooms"> Bedrooms</div><div class="number_bathrooms"> Bathrooms</div></div><div class="user"><b>Owner: </b></div><div class="description"></div><DIV class="reviews"><H2>Reviews </H2><SPAN>(show)</SPAN><DIV class="reviewItems"></DIV></DIV>';
 
 window.onload = () => {
   const checkedStates = {};
@@ -142,8 +142,8 @@ window.onload = () => {
     const _id = $(this).closest('ARTICLE').attr('id');
 
     // To show the reviews
-    if ($(this).text().match('show')) {
-      $(this).text('hide');
+    if ($(this).text().match('(show)')) {
+      $(this).text('(hide)');
       $.ajax({
         type: 'GET',
         url: 'http://0.0.0.0:5001/api/v1/places/' + _id + '/reviews',
@@ -158,7 +158,7 @@ window.onload = () => {
         }
       });
     } else { // To hide the reviews
-      $(this).text('show');
+      $(this).text('(show)');
       $('#' + _id + ' DIV.reviewItems').empty();
     }
   });
