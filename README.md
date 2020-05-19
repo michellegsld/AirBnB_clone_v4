@@ -106,7 +106,7 @@ All scripts comprising the HBnB API are found in the directory `api/v1/`.
 ### Examples <a id="api_ex"></a>
 Run this command to host the API application:
 ```
-HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd HBNB_MYSQL_HOST=localhost HBNB_MYSQL_    DB=hbnb_dev_db HBNB_TYPE_STORAGE=db HBNB_API_PORT=5001 python3 -m api.v1.app
+HBNB_MYSQL_USER=hbnb_dev HBNB_MYSQL_PWD=hbnb_dev_pwd HBNB_MYSQL_HOST=localhost HBNB_MYSQL_DB=hbnb_dev_db HBNB_TYPE_STORAGE=db HBNB_API_PORT=5001 python3 -m api.v1.app
 ```
 
 ## Web Dynamic
@@ -120,6 +120,8 @@ Web dynamic was the final stage of the HBnB project. The goal at this stage was 
     * Grey when connected
     * Red when not connected
 
+![hbnb main](readme_images/hbnb_main.png)
+![hbnb filter](readme_images/hbnb_filter.png)
 
 ### File Descriptions <a id="dynamic_files"></a>
 All the scripts and content created for this final version of HBnB is found in the directory `web_dynamic/`.
